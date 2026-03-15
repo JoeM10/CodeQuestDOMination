@@ -35,54 +35,64 @@ const quizData = [
 
 let questionNumber = 0;
 let correctAnswers = 0;
-let currentQuestion = document.createElement("h2");
+const currentQuestion = document.createElement("h2");
+
+for (let index = 0; index < quizData[questionNumber].options.length; index++) {
+    const questionOptions = document.createElement("button");
+    questionOptions.id = "question-options";
+    optionsContainer.appendChild(questionOptions);
+};
 
 function loadQuestion() {
     currentQuestion.innerText = quizData[questionNumber].question;
     questionContainer.appendChild(currentQuestion);
-}
+};
 
 function checkAnswer(optionsIndex) {
     if (optionsIndex != quizData[questionNumber].answer) {
         return false;
     } else {
         return true;
-    }
-}
+    };
+};
 
 function loadOptions() {
+    const allOptions = document.querySelectorAll("#question-options");
+    // Sets the option buttons to default settings.
+    allOptions.forEach((questionOptions) => {
+        questionOptions.style.backgroundColor = "white"
+        questionOptions.disabled = false;
+        questionOptions.style.cursor = "pointer";
+    })
+    // Gives the option buttons text corresponding to the current question.
     for (let index = 0; index < quizData[questionNumber].options.length; index++) {
-        let questionOptions = document.createElement("button");
-        questionOptions.id = "question-options";
-        questionOptions.innerText = quizData[questionNumber].options[index];
-        optionsContainer.appendChild(questionOptions);
-        questionOptions.addEventListener("click", () => {
+        allOptions[index].innerText = quizData[questionNumber].options[index];
+        // Checks if they answered correctly and disables buttons until next question.
+        allOptions[index].addEventListener("click", () => {
             if (checkAnswer(index)) {
                 correctAnswers += 1;
-                questionOptions.style.backgroundColor = "green";
-                const allOptions = document.querySelectorAll("#question-options");
+                allOptions[index].style.backgroundColor = "green";
                 allOptions.forEach((questionOptions) => {
                     questionOptions.disabled = true;
                     questionOptions.style.cursor = "default";
                 })
             } else {
-                questionOptions.style.backgroundColor = "red";
-                const allOptions = document.querySelectorAll("#question-options");
+                allOptions[index].style.backgroundColor = "red";
                 allOptions[quizData[questionNumber].answer].style.backgroundColor = "green";
                 allOptions.forEach((questionOptions) => {
                     questionOptions.disabled = true;
                     questionOptions.style.cursor = "default";
                 })
-            };
+            }
         })
-    }
-}
+    };
+};
 
 function nextQuestion() {
     questionNumber += 1;
     loadQuestion();
     loadOptions();
-}
+};
 
 function initialize() {
     questionNumber = 0;
@@ -93,4 +103,8 @@ function initialize() {
 
 initialize();
 
-nextButton.addEventListener("click", nextQuestion);
+nextButton.addEventListener("click", () => {
+    if (questionNumber < quizData.length -1) {
+        nextQuestion();
+    }
+});

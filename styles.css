@@ -24,6 +24,11 @@ body {
     background-color: azure;
 }
 
+#score-container {
+    justify-content: center;
+    gap: 25px;
+}
+
 #next-button,
 #restart-button {
     width: 120px;
