@@ -2,8 +2,66 @@ const quizContainer = document.getElementById("quiz-container");
 const questionContainer = document.getElementById("question-container");
 const optionsContainer = document.getElementById("options-container");
 const nextButton = document.getElementById("next-button");
+const scoreContainer = document.getElementById("score-container");
 const score = document.getElementById("score");
 const restartButton = document.getElementById("restart-button");
+
+function loadQuestion() {
+    currentQuestion.innerText = quizData[questionNumber].question;
+    questionContainer.appendChild(currentQuestion);
+};
+
+function loadOptions() {
+    // Sets the option buttons to default settings.
+    allOptions.forEach((questionOptions) => {
+        questionOptions.style.backgroundColor = "white"
+        questionOptions.disabled = false;
+        questionOptions.style.cursor = "pointer";
+    })
+    // Gives the option buttons text corresponding to the current question.
+    for (let index = 0; index < quizData[questionNumber].options.length; index++) {
+        allOptions[index].innerText = quizData[questionNumber].options[index];
+    };
+};
+
+function checkAnswer(optionsIndex) {
+    if (optionsIndex != quizData[questionNumber].answer) {
+        allOptions[optionsIndex].style.backgroundColor = "red";
+        allOptions[quizData[questionNumber].answer].style.backgroundColor = "green";
+        allOptions.forEach((questionOptions) => {
+            questionOptions.disabled = true;
+            questionOptions.style.cursor = "default";
+        })
+    } else {
+        correctAnswers += 1;
+        allOptions[optionsIndex].style.backgroundColor = "green";
+        allOptions.forEach((questionOptions) => {
+            questionOptions.disabled = true;
+            questionOptions.style.cursor = "default";
+        })
+    };
+};
+
+function nextQuestion() {
+    questionNumber += 1;
+    loadQuestion();
+    loadOptions();
+};
+
+function endOfQuiz() {
+    score.innerText = `${correctAnswers} out of ${quizData.length}`;
+    scoreContainer.style.display = "flex";
+    quizContainer.style.display = "none";
+}
+
+function initialize() {
+    quizContainer.style.display = "flex";
+    scoreContainer.style.display = "none";
+    questionNumber = 0;
+    correctAnswers = 0;
+    loadQuestion();
+    loadOptions();
+}
 
 const quizData = [ 
     {
@@ -12,7 +70,7 @@ const quizData = [
         answer: 2
     },
     {
-        question: "What data type is this value?",
+        question: "What data type is this value: true",
         options: ["String", "Boolean", "Number", "Undefined"],
         answer: 1
     },
@@ -37,74 +95,28 @@ let questionNumber = 0;
 let correctAnswers = 0;
 const currentQuestion = document.createElement("h2");
 
+// Creates the option buttons.
 for (let index = 0; index < quizData[questionNumber].options.length; index++) {
     const questionOptions = document.createElement("button");
     questionOptions.id = "question-options";
     optionsContainer.appendChild(questionOptions);
-};
-
-function loadQuestion() {
-    currentQuestion.innerText = quizData[questionNumber].question;
-    questionContainer.appendChild(currentQuestion);
-};
-
-function checkAnswer(optionsIndex) {
-    if (optionsIndex != quizData[questionNumber].answer) {
-        return false;
-    } else {
-        return true;
-    };
-};
-
-function loadOptions() {
-    const allOptions = document.querySelectorAll("#question-options");
-    // Sets the option buttons to default settings.
-    allOptions.forEach((questionOptions) => {
-        questionOptions.style.backgroundColor = "white"
-        questionOptions.disabled = false;
-        questionOptions.style.cursor = "pointer";
+    questionOptions.addEventListener("click", () => {
+        checkAnswer(index);
     })
-    // Gives the option buttons text corresponding to the current question.
-    for (let index = 0; index < quizData[questionNumber].options.length; index++) {
-        allOptions[index].innerText = quizData[questionNumber].options[index];
-        // Checks if they answered correctly and disables buttons until next question.
-        allOptions[index].addEventListener("click", () => {
-            if (checkAnswer(index)) {
-                correctAnswers += 1;
-                allOptions[index].style.backgroundColor = "green";
-                allOptions.forEach((questionOptions) => {
-                    questionOptions.disabled = true;
-                    questionOptions.style.cursor = "default";
-                })
-            } else {
-                allOptions[index].style.backgroundColor = "red";
-                allOptions[quizData[questionNumber].answer].style.backgroundColor = "green";
-                allOptions.forEach((questionOptions) => {
-                    questionOptions.disabled = true;
-                    questionOptions.style.cursor = "default";
-                })
-            }
-        })
-    };
 };
 
-function nextQuestion() {
-    questionNumber += 1;
-    loadQuestion();
-    loadOptions();
-};
-
-function initialize() {
-    questionNumber = 0;
-    correctAnswers = 0;
-    loadQuestion();
-    loadOptions();
-}
-
-initialize();
+const allOptions = document.querySelectorAll("#question-options");
 
 nextButton.addEventListener("click", () => {
     if (questionNumber < quizData.length -1) {
         nextQuestion();
+    } else {
+        endOfQuiz()
     }
 });
+
+restartButton.addEventListener("click", () => {
+    initialize();
+})
+
+initialize();
