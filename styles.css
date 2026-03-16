@@ -24,6 +24,10 @@ body {
     background-color: azure;
 }
 
+h1 {
+    text-decoration: underline;
+}
+
 #score-container {
     display: none;
     justify-content: center;

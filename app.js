@@ -12,6 +12,8 @@ function loadQuestion() {
 };
 
 function loadOptions() {
+    nextButton.disabled = true;
+    nextButton.style.cursor = "default";
     // Sets the option buttons to default settings.
     allOptions.forEach((questionOptions) => {
         questionOptions.style.backgroundColor = "white"
@@ -25,6 +27,8 @@ function loadOptions() {
 };
 
 function checkAnswer(optionsIndex) {
+    nextButton.disabled = false;
+    nextButton.style.cursor = "pointer";
     if (optionsIndex != quizData[questionNumber].answer) {
         allOptions[optionsIndex].style.backgroundColor = "red";
         allOptions[quizData[questionNumber].answer].style.backgroundColor = "green";
